@@ -1,0 +1,7 @@
+{
+  "referenciaDespacho": "TEST-002",
+  "farmacia": "FARM-001",
+  "medicamento": "Amoxicilina SIN-STOCK",
+  "dosis": "1g",
+  "cantidad": 10
+}

@@ -1,0 +1,136 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Farmacia API",
+    "version": "1.0.0",
+    "description": "API de proveedor externo de farmacia para simular envío de recetas y validación de stock."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Servidor Local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Healthcheck del servicio",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Servicio activo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/farmacia/recepcionar-receta": {
+      "post": {
+        "summary": "Recepcionar una receta enviada por MediCitas",
+        "description": "La farmacia recibe los datos del medicamento desde MediCitas, evalúa su propio stock de forma síncrona y responde si acepta o rechaza la solicitud de despacho.",
+        "tags": ["Recetas"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "referenciaDespacho",
+                  "farmacia",
+                  "medicamento",
+                  "dosis",
+                  "cantidad"
+                ],
+                "properties": {
+                  "referenciaDespacho": {
+                    "type": "string",
+                    "example": "REC-9b5c-aceda6c7e5e5"
+                  },
+                  "farmacia": {
+                    "type": "string",
+                    "example": "FARM-001"
+                  },
+                  "medicamento": {
+                    "type": "string",
+                    "example": "Paracetamol"
+                  },
+                  "dosis": {
+                    "type": "string",
+                    "example": "1g"
+                  },
+                  "cantidad": {
+                    "type": "integer",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Evaluación de receta completada (puede ser aceptada o rechazada por stock)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "aceptada": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "referencia": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "REF-FARMA-8849201"
+                    },
+                    "motivo": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos incompletos en la solicitud"
+          },
+          "401": {
+            "description": "Token de autorización inválido"
+          },
+          "503": {
+            "description": "Servicio saturado (Backpressure)"
+          }
+        }
+      }
+    }
+  }
+}

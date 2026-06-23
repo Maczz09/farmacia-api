@@ -1,0 +1,56 @@
+services:
+  farmacia-api:
+    build: .
+    container_name: farmacia_api
+    restart: unless-stopped
+    ports:
+      - "4002:4002"
+    environment:
+      DB_HOST: mysql-farmacia
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: db_farmacia
+      FARMACIA_API_KEY: ${FARMACIA_API_KEY}
+      DIAS_LIMITE_RETIRO: 3
+      PROBABILIDAD_RECHAZO_STOCK: 0.1
+      MAX_SOLICITUDES_CONCURRENTES: 50
+    depends_on:
+      mysql-farmacia:
+        condition: service_healthy
+    networks:
+      - farmacia_net
+      - medicitas_shared_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mysql-farmacia:
+    image: mysql:8.0
+    container_name: mysql_farmacia
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: db_farmacia
+    ports:
+      - "3312:3306"
+    volumes:
+      - farmacia_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - farmacia_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  farmacia_data:
+
+networks:
+  farmacia_net:
+  medicitas_shared_net:
+    external: true
