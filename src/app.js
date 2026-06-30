@@ -18,7 +18,7 @@ app.use(express.json());
 
 const recetasRepository = new RecetasMySQLRepository(pool);
 const procesarRecetaUseCase = new ProcesarRecetaUseCase(recetasRepository);
-const recetasController = new RecetasController(procesarRecetaUseCase);
+const recetasController = new RecetasController(procesarRecetaUseCase, recetasRepository);
 
 app.use('/', healthRoutes);
 app.use('/api/v1/farmacia', recetasRoutesFactory(recetasController));

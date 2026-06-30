@@ -6,7 +6,7 @@ class ProcesarRecetaUseCase {
     this.repo = recetasRepository;
   }
 
-  async ejecutar({ referenciaDespacho, farmacia, medicamento, dosis, cantidad }) {
+  async ejecutar({ referenciaDespacho, idEncuentroClinico, farmacia, medicamento, dosis, cantidad }) {
     // Idempotencia: si ya se decidió antes para este referenciaDespacho,
     // se devuelve la MISMA decisión — nunca se reevalúa el stock dos veces.
     const existente = await this.repo.findByReferenciaDespacho(referenciaDespacho);
@@ -17,6 +17,7 @@ class ProcesarRecetaUseCase {
     const receta = new RecetaExterna({
       idRecetaFarmacia: randomUUID(),
       referenciaDespacho,
+      idEncuentroClinico: idEncuentroClinico || null,
       farmaciaCodigo: farmacia,
       medicamento, dosis, cantidad,
     });

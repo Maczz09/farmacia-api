@@ -4,6 +4,7 @@ USE db_farmacia;
 CREATE TABLE IF NOT EXISTS recetas_recibidas (
   id_receta_farmacia      VARCHAR(36)  NOT NULL DEFAULT (UUID()),
   referencia_despacho     VARCHAR(100) NOT NULL,
+  id_encuentro_clinico    VARCHAR(100) NULL,
   farmacia_codigo         VARCHAR(50)  NOT NULL,
   medicamento             VARCHAR(200) NOT NULL,
   dosis                   VARCHAR(100) NOT NULL,

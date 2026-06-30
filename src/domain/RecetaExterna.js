@@ -9,10 +9,11 @@ const DIAS_LIMITE_RETIRO = parseInt(process.env.DIAS_LIMITE_RETIRO || '3');
 const PROBABILIDAD_RECHAZO = parseFloat(process.env.PROBABILIDAD_RECHAZO_STOCK || '0.1');
 
 class RecetaExterna {
-  constructor({ idRecetaFarmacia, referenciaDespacho, farmaciaCodigo, medicamento, dosis,
+  constructor({ idRecetaFarmacia, referenciaDespacho, idEncuentroClinico, farmaciaCodigo, medicamento, dosis,
                 cantidad, estado, referenciaInterna, motivoRechazo, fechaRecepcion, fechaLimiteRetiro }) {
     this.idRecetaFarmacia = idRecetaFarmacia;
     this.referenciaDespacho = referenciaDespacho;
+    this.idEncuentroClinico = idEncuentroClinico || null;
     this.farmaciaCodigo = farmaciaCodigo;
     this.medicamento = medicamento;
     this.dosis = dosis;
@@ -57,6 +58,21 @@ class RecetaExterna {
   rechazarPorStock(motivo) {
     this.estado = ESTADOS.RECHAZADA_SIN_STOCK;
     this.motivoRechazo = motivo;
+  }
+
+  confirmarRetiro() {
+    if (this.estado !== ESTADOS.ACEPTADA) {
+      throw new Error(`No se puede confirmar retiro: estado actual es ${this.estado}`);
+    }
+    this.estado = ESTADOS.RETIRADA_CONFIRMADA;
+  }
+
+  rechazarManualmente(motivo) {
+    if (this.estado !== ESTADOS.ACEPTADA) {
+      throw new Error(`Solo se puede rechazar manualmente una receta ACEPTADA. Estado actual: ${this.estado}`);
+    }
+    this.estado = ESTADOS.RECHAZADA_SIN_STOCK;
+    this.motivoRechazo = motivo || 'Rechazada manualmente por farmacéutico';
   }
 
   toRespuestaHTTP() {
