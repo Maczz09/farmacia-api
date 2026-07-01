@@ -1,3 +1,4 @@
+const webhookService = require('../../services/WebhookService');
 const RecetaExterna = require('../../domain/RecetaExterna');
 
 class RecetasController {
@@ -49,6 +50,14 @@ class RecetasController {
       }
       receta.confirmarRetiro();
       await this.recetasRepository.actualizarEstado(receta.idRecetaFarmacia, receta.estado);
+      
+      // Notificar a Medicitas-Backend vía Webhook (fire-and-forget con reintentos internos)
+      webhookService.notificarCambioEstado({
+        idReceta: receta.referenciaDespacho,
+        estado: 'RETIRADA',
+        referenciaFarmacia: receta.referenciaInterna
+      }).catch(err => console.error('[Webhook] Error crítico no manejado:', err));
+
       res.json(this._toDTO(receta));
     } catch (err) {
       if (err.message?.startsWith('No se puede confirmar retiro')) {
@@ -68,6 +77,15 @@ class RecetasController {
       receta.rechazarManualmente(motivo);
       await this.recetasRepository.actualizarEstado(receta.idRecetaFarmacia, receta.estado);
       await this.recetasRepository.guardarMotivoRechazo(receta.idRecetaFarmacia, receta.motivoRechazo);
+      
+      // Notificar a Medicitas-Backend vía Webhook
+      webhookService.notificarCambioEstado({
+        idReceta: receta.referenciaDespacho,
+        estado: 'RECHAZADA',
+        referenciaFarmacia: receta.referenciaInterna,
+        motivoRechazo: receta.motivoRechazo
+      }).catch(err => console.error('[Webhook] Error crítico no manejado:', err));
+
       res.json(this._toDTO(receta));
     } catch (err) {
       if (err.message?.startsWith('Solo se puede rechazar')) {
