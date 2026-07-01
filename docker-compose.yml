@@ -47,6 +47,15 @@ services:
       timeout: 5s
       retries: 5
 
+  autoheal:
+    image: willfarrell/autoheal
+    container_name: farmacia_autoheal
+    restart: always
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
   farmacia_data:
 
