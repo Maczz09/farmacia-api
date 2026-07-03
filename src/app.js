@@ -1,3 +1,4 @@
+const logger = require('./config/logger');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -25,7 +26,7 @@ app.use('/api/v1/farmacia', recetasRoutesFactory(recetasController));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  logger.error(err);
   res.status(500).json({ aceptada: false, referencia: null, motivo: 'Error interno del servidor.' });
 });
 

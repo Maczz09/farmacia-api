@@ -15,6 +15,14 @@ services:
       DIAS_LIMITE_RETIRO: 3
       PROBABILIDAD_RECHAZO_STOCK: 0.1
       MAX_SOLICITUDES_CONCURRENTES: 50
+      # Webhook hacia MediCitas (backend en la red compartida)
+      MEDICITAS_WEBHOOK_URL: http://medicitas_backend:3000/api/v1/webhooks/farmacia
+      # Logs estructurados → Loki de MediCitas (vía red compartida)
+      LOKI_HOST: http://loki:3100
+      LOKI_APP_LABEL: farmacia-api
+      # Tracing distribuido → Jaeger de MediCitas (vía red compartida)
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+      OTEL_SERVICE_NAME: farmacia-api
     depends_on:
       mysql-farmacia:
         condition: service_healthy

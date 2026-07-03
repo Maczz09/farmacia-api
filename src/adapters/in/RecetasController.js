@@ -1,3 +1,4 @@
+const logger = require('../../config/logger');
 const webhookService = require('../../services/WebhookService');
 const RecetaExterna = require('../../domain/RecetaExterna');
 
@@ -56,7 +57,7 @@ class RecetasController {
         idReceta: receta.referenciaDespacho,
         estado: 'RETIRADA',
         referenciaFarmacia: receta.referenciaInterna
-      }).catch(err => console.error('[Webhook] Error crítico no manejado:', err));
+      }).catch(err => logger.error('[Webhook] Error crítico no manejado:', err));
 
       res.json(this._toDTO(receta));
     } catch (err) {
@@ -84,7 +85,7 @@ class RecetasController {
         estado: 'RECHAZADA',
         referenciaFarmacia: receta.referenciaInterna,
         motivoRechazo: receta.motivoRechazo
-      }).catch(err => console.error('[Webhook] Error crítico no manejado:', err));
+      }).catch(err => logger.error('[Webhook] Error crítico no manejado:', err));
 
       res.json(this._toDTO(receta));
     } catch (err) {

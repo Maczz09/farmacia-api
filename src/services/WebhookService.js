@@ -1,3 +1,4 @@
+const logger = require('../config/logger');
 const axios = require('axios');
 const axiosRetry = require('axios-retry').default;
 
@@ -26,11 +27,18 @@ class WebhookService {
    * @param {string} motivoRechazo 
    */
   async notificarCambioEstado({ idReceta, estado, referenciaFarmacia, motivoRechazo }) {
-    const url = process.env.MEDICITAS_WEBHOOK_URL || 'http://localhost:3000/api/v1/webhooks/farmacia';
-    const apiKey = process.env.API_KEY || 'test-api-key-12345'; // Compartida
-    
+    const url = process.env.MEDICITAS_WEBHOOK_URL || 'http://medicitas_backend:3000/api/v1/webhooks/farmacia';
+    // Secreto compartido bidireccional: la misma FARMACIA_API_KEY que MediCitas
+    // usa para llamarnos autentica nuestros webhooks hacia MediCitas.
+    const apiKey = process.env.FARMACIA_API_KEY;
+
+    if (!apiKey) {
+      logger.error({ idReceta }, '[WebhookService] FARMACIA_API_KEY no configurada — webhook omitido');
+      return;
+    }
+
     try {
-      console.log({ idReceta, estado, url }, '[WebhookService] Enviando webhook de actualización a Medicitas');
+      logger.info({ idReceta, estado, url }, '[WebhookService] Enviando webhook de actualización a Medicitas');
       
       const payload = {
         idReceta,
@@ -41,14 +49,14 @@ class WebhookService {
 
       const response = await webhookClient.post(url, payload, {
         headers: {
-          'x-api-key': apiKey,
+          'X-Webhook-Api-Key': apiKey,
           'Content-Type': 'application/json'
         }
       });
 
-      console.log({ idReceta, status: response.status }, '[WebhookService] Webhook entregado con éxito');
+      logger.info({ idReceta, status: response.status }, '[WebhookService] Webhook entregado con éxito');
     } catch (error) {
-      console.error({ 
+      logger.error({ 
         idReceta, 
         error: error.message,
         url 
