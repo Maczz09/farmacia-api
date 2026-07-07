@@ -40,7 +40,7 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
-app.use('/api/v1/farmacia', recetasRoutesFactory(recetasController));
+app.use('/api/v2/farmacia', recetasRoutesFactory(recetasController));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(errorHandler);

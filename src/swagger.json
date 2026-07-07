@@ -44,7 +44,7 @@
         }
       }
     },
-    "/api/v1/farmacia/recepcionar-receta": {
+    "/api/v2/farmacia/recepcionar-receta": {
       "post": {
         "summary": "Recepcionar una receta enviada por MediCitas",
         "description": "La farmacia recibe los datos del medicamento desde MediCitas, evalúa su propio stock de forma síncrona y responde si acepta o rechaza la solicitud de despacho.",

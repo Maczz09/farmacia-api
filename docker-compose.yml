@@ -16,7 +16,7 @@ services:
       PROBABILIDAD_RECHAZO_STOCK: 0.1
       MAX_SOLICITUDES_CONCURRENTES: 50
       # Webhook hacia MediCitas (backend en la red compartida)
-      MEDICITAS_WEBHOOK_URL: http://medicitas_backend:3000/api/v1/webhooks/farmacia
+      MEDICITAS_WEBHOOK_URL: http://medicitas_backend:3000/api/v2/webhooks/farmacia
       # Logs estructurados → Loki de MediCitas (vía red compartida)
       LOKI_HOST: http://loki:3100
       LOKI_APP_LABEL: farmacia-api

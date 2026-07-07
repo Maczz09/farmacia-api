@@ -49,7 +49,7 @@ class WebhookService {
    * @param {string} motivoRechazo
    */
   async notificarCambioEstado({ idReceta, estado, referenciaFarmacia, motivoRechazo }) {
-    const url = process.env.MEDICITAS_WEBHOOK_URL || 'http://medicitas_backend:3000/api/v1/webhooks/farmacia';
+    const url = process.env.MEDICITAS_WEBHOOK_URL || 'http://medicitas_backend:3000/api/v2/webhooks/farmacia';
     // Secreto compartido bidireccional: la misma FARMACIA_API_KEY que MediCitas
     // usa para llamarnos autentica nuestros webhooks hacia MediCitas.
     const apiKey = process.env.FARMACIA_API_KEY;
