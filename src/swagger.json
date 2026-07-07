@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Farmacia API",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "API de proveedor externo de farmacia para simular envío de recetas y validación de stock."
   },
   "servers": [
