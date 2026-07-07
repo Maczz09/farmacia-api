@@ -1,3 +1,5 @@
+const { DomainError } = require('./errors');
+
 const ESTADOS = Object.freeze({
   ACEPTADA: 'ACEPTADA',
   RECHAZADA_SIN_STOCK: 'RECHAZADA_SIN_STOCK',
@@ -62,14 +64,14 @@ class RecetaExterna {
 
   confirmarRetiro() {
     if (this.estado !== ESTADOS.ACEPTADA) {
-      throw new Error(`No se puede confirmar retiro: estado actual es ${this.estado}`);
+      throw new DomainError('TRANSICION_INVALIDA', 409, `No se puede confirmar retiro: estado actual es ${this.estado}`);
     }
     this.estado = ESTADOS.RETIRADA_CONFIRMADA;
   }
 
   rechazarManualmente(motivo) {
     if (this.estado !== ESTADOS.ACEPTADA) {
-      throw new Error(`Solo se puede rechazar manualmente una receta ACEPTADA. Estado actual: ${this.estado}`);
+      throw new DomainError('TRANSICION_INVALIDA', 409, `Solo se puede rechazar manualmente una receta ACEPTADA. Estado actual: ${this.estado}`);
     }
     this.estado = ESTADOS.RECHAZADA_SIN_STOCK;
     this.motivoRechazo = motivo || 'Rechazada manualmente por farmacéutico';

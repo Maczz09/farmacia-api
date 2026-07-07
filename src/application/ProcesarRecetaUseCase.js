@@ -1,5 +1,6 @@
 const RecetaExterna = require('../domain/RecetaExterna');
 const { randomUUID } = require('crypto');
+const { recetasProcesadasCounter } = require('../config/metrics');
 
 class ProcesarRecetaUseCase {
   constructor(recetasRepository) {
@@ -28,6 +29,7 @@ class ProcesarRecetaUseCase {
     } else {
       receta.rechazarPorStock(motivo);
     }
+    recetasProcesadasCounter.inc({ resultado: hayStock ? 'aceptada' : 'rechazada_stock' });
 
     await this.repo.save(receta);
     return receta.toRespuestaHTTP();
